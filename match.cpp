@@ -3,6 +3,7 @@
 #include <cmath>
 
 class MatchingEngine {
+    
 
     std::vector<int> buys;
     std::vector<int> sells;
@@ -26,15 +27,22 @@ class MatchingEngine {
 
 };
 
-
-class MinHeap {
-    std::vector<int> minHeap;
-    int length = 0;
-
+class Heap {
+    protected:
+        std::vector<int> heap;
+        int length = 0;
     public:
 
+    virtual bool is_heap_condition_satisfied(int parent, int child) = 0;
+
+    virtual int choose_child(int leftChild, int rightChild) = 0;
+
     std::vector<int> getMinHeap() {
-        return minHeap;
+        return heap;
+    }
+
+    int peek_heap() {
+        return heap[0];
     }
 
 
@@ -42,7 +50,7 @@ class MinHeap {
         int parentIndex;
         int holder;
         
-        minHeap.push_back(element);
+        heap.push_back(element);
         length += 1;
         int height = std::log2(length);
 
@@ -52,10 +60,11 @@ class MinHeap {
 
             parentIndex = (int) (pointer-1)/2;
             
-            if (minHeap[parentIndex] > element) {
-                holder = minHeap[parentIndex];
-                minHeap[parentIndex] = minHeap[pointer];
-                minHeap[pointer] = holder;
+            if (!(is_heap_condition_satisfied(parentIndex, pointer))) {
+          
+                holder = heap[parentIndex];
+                heap[parentIndex] = heap[pointer];
+                heap[pointer] = holder;
             }
             else {
                 break;
@@ -72,11 +81,11 @@ class MinHeap {
         int holder;
 
 
-        minHeap[0] = minHeap[length-1];
+        heap[0] = heap[length-1];
 
-        minHeap.pop_back();
+        heap.pop_back();
 
-        minHeap.shrink_to_fit();
+        heap.shrink_to_fit();
 
         length -= 1;
 
@@ -89,11 +98,11 @@ class MinHeap {
             int rightChild = 2*pointer + 2;
 
             if (rightChild < length -1) {
-                if (minHeap[rightChild] < minHeap[leftChild]) {
-                    if (minHeap[rightChild] < minHeap[pointer]) {
-                        holder = minHeap[rightChild];
-                        minHeap[rightChild] = minHeap[pointer];
-                        minHeap[pointer] = holder;
+                if (choose_child(leftChild, rightChild) == rightChild) { //rightChild smaller than leftChild
+                    if (!(is_heap_condition_satisfied(pointer, rightChild))) {
+                        holder = heap[rightChild];
+                        heap[rightChild] = heap[pointer];
+                        heap[pointer] = holder;
 
                         pointer = rightChild;
                     }
@@ -102,10 +111,10 @@ class MinHeap {
                     }   
                 }
                 else {
-                    if (minHeap[leftChild] < minHeap[pointer]) {
-                        holder = minHeap[leftChild];
-                        minHeap[leftChild] = minHeap[pointer];
-                        minHeap[pointer] = holder;
+                    if (!(is_heap_condition_satisfied(pointer, leftChild))) {
+                        holder = heap[leftChild];
+                        heap[leftChild] = heap[pointer];
+                        heap[pointer] = holder;
 
                         pointer = leftChild;
                     }
@@ -116,10 +125,10 @@ class MinHeap {
                 }
             }
             else if (leftChild < length -1) {
-                if (minHeap[leftChild] < minHeap[pointer]) {
-                    holder = minHeap[leftChild];
-                    minHeap[leftChild] = minHeap[pointer];
-                    minHeap[pointer] = holder;
+                if (!(is_heap_condition_satisfied(pointer, leftChild))) {
+                    holder = heap[leftChild];
+                    heap[leftChild] = heap[pointer];
+                    heap[pointer] = holder;
                 }
                 else {
                     break;
@@ -130,14 +139,37 @@ class MinHeap {
     }
 
     void print_heap() {
-        for (int i : minHeap) {
+        for (int i : heap) {
             std::cout << i << ' ';
     }
     }
 
-    
-    
 };
+
+
+class MinHeap : public Heap {
+    private:
+        
+        bool is_heap_condition_satisfied(int parent, int child) override {
+            if (heap[parent] < heap[child]) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        int choose_child(int leftChild, int rightChild) override {
+            if (heap[leftChild] < heap[rightChild]) {
+                return leftChild;
+            }
+            else {
+                return rightChild;
+            }
+        }
+};
+
+
 
 int main() {
     MinHeap minHeap = MinHeap();
