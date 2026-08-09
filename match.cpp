@@ -37,7 +37,14 @@ class MatchingEngine {
     void matchTrades() {
         while (!buys.isEmpty() && !sells.isEmpty()) {
             if (buys.peek_heap() >= sells.peek_heap()) {
+                
+                std::cout << "Selling 1 share at £" << sells.peek_heap() << ", bidding price: £" << buys.peek_heap() << ".";
                 executeTrade();
+                std:: cout << "\nSold!";
+            }
+            else {
+                std::cout << "\nNo more sales available. Highest bid: £" << buys.peek_heap() << ", lowest sell: £" << sells.peek_heap() << ".";
+                break;
             }
         }
     }
@@ -58,7 +65,17 @@ int main() {
     matchingEngine.addBuy(4);
     matchingEngine.addBuy(12);
 
-    matchingEngine.showBuys();
+    matchingEngine.addSell(11);
+    matchingEngine.addSell(13);
+
+  
+    std::cout << '\n';
+
+    matchingEngine.matchTrades();
+    std::cout << '\n';
+    
+    std::cout << '\n';
+    
 
   
 };
