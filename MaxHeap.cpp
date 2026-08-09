@@ -1,23 +1,20 @@
-#include "Heap.cpp"
+#include "MaxHeap.h"
 
-class MaxHeap : public Heap {
-    private:
-        
-        bool is_heap_condition_satisfied(int parent, int child) override {
-            if (heap[parent] > heap[child]) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
 
-        int choose_child(int leftChild, int rightChild) override {
-            if (heap[leftChild] > heap[rightChild]) {
-                return leftChild;
-            }
-            else {
-                return rightChild;
-            }
-        }
-};
+bool MaxHeap::is_heap_condition_satisfied(int parent, int child) {
+    if (heap[parent] > heap[child]) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int MaxHeap::choose_child(int leftChild, int rightChild) {
+    if (heap[leftChild] > heap[rightChild]) {
+        return leftChild;
+    }
+    else {
+        return rightChild;
+    }
+}

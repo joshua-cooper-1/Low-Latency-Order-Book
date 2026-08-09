@@ -2,46 +2,63 @@
 #include <vector>
 #include <cmath>
 
+#include "MinHeap.h"
+#include "MaxHeap.h"
+
 class MatchingEngine {
     
 
-    std::vector<int> buys;
-    std::vector<int> sells;
+    MaxHeap buys;
+    MinHeap sells;
 
 
     public:
     
     MatchingEngine()  {}
 
-    MatchingEngine(std::vector<int> buys, std::vector<int> sells)
-        : buys(std::move(buys)), sells(std::move(sells)) {}
+  
 
     void addBuy(int buy) {
-        //logic for adding to a heap?
+        buys.heap_add(buy);
     }
 
     void addSell(int sell) {
-        //logic for adding to a heap
+        sells.heap_add(sell);
+    }
+
+    void showBuys() {
+        buys.print_heap();
+    }
+
+    void showSells() {
+        sells.print_heap();
+    }
+
+    void matchTrades() {
+        while (!buys.isEmpty() && !sells.isEmpty()) {
+            if (buys.peek_heap() >= sells.peek_heap()) {
+                executeTrade();
+            }
+        }
+    }
+
+    void executeTrade() {
+        buys.heap_remove();
+        sells.heap_remove();
     }
 
 
 };
 
 int main() {
-    MinHeap minHeap = MinHeap();
-    minHeap.heap_add(3);
-    minHeap.heap_add(2);
-    minHeap.heap_add(1);
-    minHeap.heap_add(-1);
-    minHeap.heap_add(6);
-    minHeap.heap_add(7);
-    
+    MatchingEngine matchingEngine = MatchingEngine();
 
-    minHeap.print_heap();
+    matchingEngine.addBuy(5);
+    matchingEngine.addBuy(6);
+    matchingEngine.addBuy(4);
+    matchingEngine.addBuy(12);
 
-    std::cout << '\n';
-    
-    minHeap.heap_remove();
+    matchingEngine.showBuys();
 
-    minHeap.print_heap();
+  
 };
