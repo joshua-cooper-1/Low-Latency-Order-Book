@@ -45,10 +45,15 @@ class Heap {
         return heap[0];
     }
 
+    void swap_places(int index_1, int index_2) {
+        int holder = heap[index_1];
+        heap[index_1] = heap[index_2];
+        heap[index_2] = holder;
+    }
+
 
     void heap_add(int element) {
         int parentIndex;
-        int holder;
         
         heap.push_back(element);
         length += 1;
@@ -62,9 +67,7 @@ class Heap {
             
             if (!(is_heap_condition_satisfied(parentIndex, pointer))) {
           
-                holder = heap[parentIndex];
-                heap[parentIndex] = heap[pointer];
-                heap[pointer] = holder;
+                swap_places(pointer, parentIndex);
             }
             else {
                 break;
@@ -78,8 +81,6 @@ class Heap {
     }
 
     void heap_remove() {
-        int holder;
-
 
         heap[0] = heap[length-1];
 
@@ -100,9 +101,7 @@ class Heap {
             if (rightChild < length -1) {
                 if (choose_child(leftChild, rightChild) == rightChild) { //rightChild smaller than leftChild
                     if (!(is_heap_condition_satisfied(pointer, rightChild))) {
-                        holder = heap[rightChild];
-                        heap[rightChild] = heap[pointer];
-                        heap[pointer] = holder;
+                        swap_places(pointer, rightChild);
 
                         pointer = rightChild;
                     }
@@ -112,9 +111,7 @@ class Heap {
                 }
                 else {
                     if (!(is_heap_condition_satisfied(pointer, leftChild))) {
-                        holder = heap[leftChild];
-                        heap[leftChild] = heap[pointer];
-                        heap[pointer] = holder;
+                        swap_places(pointer, leftChild);
 
                         pointer = leftChild;
                     }
@@ -126,9 +123,7 @@ class Heap {
             }
             else if (leftChild < length -1) {
                 if (!(is_heap_condition_satisfied(pointer, leftChild))) {
-                    holder = heap[leftChild];
-                    heap[leftChild] = heap[pointer];
-                    heap[pointer] = holder;
+                    swap_places(pointer, leftChild);
                 }
                 else {
                     break;
