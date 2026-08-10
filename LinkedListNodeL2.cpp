@@ -1,45 +1,33 @@
-class LinkedListNodeL2 {
-    private:
-        LinkedListNodeL2* nextNode;
-        int price;
-        int user_id;
+#include "LinkedListNodeL2.h"
 
-    public:
+LinkedListNodeL2* LinkedListNodeL2::getPrevNode() {
+    return prevNode;
+}
 
-        LinkedListNodeL2(LinkedListNodeL2* nextNode, int price, int user_id) {
-            this->nextNode = nextNode;
-            this->price = price;
-            this->user_id = user_id;
-        }
+LinkedListNodeL2* LinkedListNodeL2::getNextNode() {
+    return nextNode;
+}
 
+int LinkedListNodeL2::getPrice() {
+    return price;
+}
 
-        LinkedListNodeL2* getNextNode() {
-            return nextNode;
-        }
+int LinkedListNodeL2::getOrderId() {
+    return orderId;
+}
 
-        int getPrice() {
-            return price;
-        }
+void LinkedListNodeL2::setPrevNode(LinkedListNodeL2* prevNode) {
+    this->prevNode = prevNode;
+}
 
-        int getUserId() {
-            return user_id;
-        }
+void LinkedListNodeL2::setNextNode(LinkedListNodeL2* nextNode) {
+    this->nextNode = nextNode;
+}
 
-        void setNextNode(LinkedListNodeL2* nextNode) {
-            this->nextNode = nextNode;
-        }
+void LinkedListNodeL2::setPrice(int price) {
+    this->price = price;
+}
 
-        void setPrice(int price) {
-            this->price = price;
-        }
-
-        void setUserId(int userId) {
-            this->user_id = user_id;
-        }
-
-
-
-        
-    
-
-};
+void LinkedListNodeL2::setOrderId(int orderId) {
+    this->orderId = orderId;
+}
