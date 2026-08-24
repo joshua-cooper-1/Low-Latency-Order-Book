@@ -30,6 +30,7 @@ void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL
         }
         else {
             current->setLeftChildL1(L1NodeToAdd);
+            
             return;
 
         }
@@ -41,6 +42,7 @@ void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL
         }
         else {
             current->setRightChildL1(L1NodeToAdd);
+            
             return;
 
         }
@@ -57,7 +59,9 @@ void LinkedListHandler::removeNodeL1(int price, LinkedListNodeL1* current) {
     }
     
     if (price == current->getPrice()) {
+        LinkedListNodeL1* parentOfDeleted = current->getParent();
         removeNodeFromTree(current);
+        rebalanceTree(parentOfDeleted);
 
     }
     else if (price < current->getPrice()) {
@@ -84,6 +88,7 @@ void LinkedListHandler::removeNodeL1(int price, LinkedListNodeL1* current) {
 
         
     }
+    
     return;
 
     
@@ -365,40 +370,46 @@ void LinkedListHandler::rotateRight(LinkedListNodeL1* rootToStartFrom) {
 
 }
 
-void LinkedListHandler::rebalanceTree() {
+void LinkedListHandler::rebalanceTree(LinkedListNodeL1* node) {
     //rebalance to keep the search O(log N)
 
     //check balance factor by doing height left child - height right child and if the modulus is greater than 1 then need to rebalance
-    int balanceFactor = getBalanceFactor(root);
+    int balanceFactor = getBalanceFactor(node);
 
-    if (balanceFactor == 0) {
+    if (-1 <= balanceFactor <= 1) {
         return;
     }
 
     int balanceFactorLeft = 0;
     int balanceFactorRight = 0;
 
-    if (root->getLeftChildL1() != nullptr) {
-        balanceFactorLeft = getBalanceFactor(root->getLeftChildL1());
+    if (node->getLeftChildL1() != nullptr) {
+        balanceFactorLeft = getBalanceFactor(node->getLeftChildL1());
     }
 
-    if (root->getRightChildL1() != nullptr) {
-        balanceFactorRight = getBalanceFactor(root->getRightChildL1());
+    if (node->getRightChildL1() != nullptr) {
+        balanceFactorRight = getBalanceFactor(node->getRightChildL1());
     }
 
     if (balanceFactor > 1 && balanceFactorLeft >= 0) {
         //root.rightRotate()
+        rotateRight(node);
     }
     else if (balanceFactor < -1 && balanceFactorRight <= 0) {
         //root.leftRotate()
+        rotateLeft(node);
     }
     else if (balanceFactor > 1 && balanceFactorLeft < 0) {
         //root.leftChild.leftRotate()
         //root.rightRotate()
+        rotateLeft(node->getLeftChildL1());
+        rotateRight(node);
     }
     else if (balanceFactor < -1 && balanceFactorRight > 0) {
         //root.rightChild.rightRotate()
         //root.leftRotate()
+        rotateRight(node->getRightChildL1());
+        rotateLeft(node);
     }
 
 
@@ -445,6 +456,8 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
 
             current->setLeftChildL1(nodeL1);
             nodeL1->setParent(current);
+
+            rebalanceAtNode(current);
             return nodeL1;
 
         }
@@ -463,6 +476,8 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
             current->setRightChildL1(nodeL1);
             nodeL1->setParent(current);
             std::cout << price;
+
+            rebalanceAtNode(current);
             return nodeL1;
 
         }
@@ -470,6 +485,16 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
     return nullptr;
 
     
+}
+ 
+void LinkedListHandler::rebalanceAtNode(LinkedListNodeL1* node) {
+    while (node != nullptr) {
+        LinkedListNodeL1* parentAbove = node->getParent();
+
+        rebalanceTree(node);
+
+        node = parentAbove;
+    }
 }
 
 void LinkedListHandler::addOrder(int price) {
@@ -482,6 +507,8 @@ void LinkedListHandler::addOrder(int price) {
     if (root == nullptr) {
         root = NodeL1;
     }
+
+    
 
 
 }

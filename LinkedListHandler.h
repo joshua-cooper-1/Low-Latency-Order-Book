@@ -42,12 +42,14 @@ class LinkedListHandler {
 
         void rotateRight(LinkedListNodeL1* rootToStartFrom) {}
 
-        void rebalanceTree();
+        void rebalanceTree(LinkedListNodeL1* node);
 
         void printTree();
         
 
         LinkedListNodeL1* getOrCreateNodeL1(int price, LinkedListNodeL1* current);
+
+        void rebalanceAtNode(LinkedListNodeL1* node);
 
         void addOrder(int price);
 
