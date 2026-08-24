@@ -1,3 +1,4 @@
+#pragma once
 #include "LinkedListNodeL2.h"
 
 
@@ -10,6 +11,7 @@ class LinkedListNodeL1 {
 
         LinkedListNodeL1* leftChildL1 = nullptr;
         LinkedListNodeL1* rightChildL1 = nullptr;
+        LinkedListNodeL1* parent = nullptr;
 
 
     public:
@@ -30,6 +32,21 @@ class LinkedListNodeL1 {
 
         void setRightChildL1(LinkedListNodeL1* rightChildL1);
 
+        LinkedListNodeL1* getParent();
+
+        void setParent(LinkedListNodeL1* parent);
+
         void printTree();
+
+        bool removeChild(LinkedListNodeL1* child);
+
+        LinkedListNodeL1* getInOrderSuccessor();
+
+    
+
+        LinkedListNodeL1* getMinimum();
+
+        int getHeight();
+
 
 };
