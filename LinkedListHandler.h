@@ -22,7 +22,7 @@ class LinkedListHandler {
 
         void removeNodeL1(int price, LinkedListNodeL1* current);
 
-        void removeNodeFromTree(LinkedListNodeL1* nodeL1ToRemove);
+        LinkedListNodeL1* removeNodeFromTree(LinkedListNodeL1* nodeL1ToRemove);
 
         LinkedListNodeL1* getNodeL1(int price, LinkedListNodeL1* current);
 
