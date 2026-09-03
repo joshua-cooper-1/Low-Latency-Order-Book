@@ -24,13 +24,43 @@ void LinkedListNodeL1::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
     if (headL2 == nullptr) {
         this->headL2 = NodeL2ToAdd;
         this->tailL2 = NodeL2ToAdd;
+        NodeL2ToAdd->setPrevNode(nullptr);
+        NodeL2ToAdd->setNextNode(nullptr);
     }
     else {
         NodeL2ToAdd->setPrevNode(this->tailL2);
+        NodeL2ToAdd->setNextNode(nullptr);
         this->tailL2->setNextNode(NodeL2ToAdd);
+        this->tailL2 = NodeL2ToAdd;
     }
-    this->tailL2 = NodeL2ToAdd;
     
+    
+}
+
+void LinkedListNodeL1::removeNodeL2(LinkedListNodeL2* node) {
+    if (node == nullptr) return;
+
+    LinkedListNodeL2* prev = node->getPrevNode();
+    LinkedListNodeL2* next = node->getNextNode();
+
+    if (prev != nullptr) {
+        prev->setNextNode(next);
+    } else {
+        headL2 = next; // Removing head
+    }
+
+    if (next != nullptr) {
+        next->setPrevNode(prev);
+    } else {
+        tailL2 = prev; // Removing tail
+    }
+
+    node->setPrevNode(nullptr);
+    node->setNextNode(nullptr);
+}
+
+bool LinkedListNodeL1::hasOrders() {
+    return headL2 != nullptr;
 }
 
 void LinkedListNodeL1::setPrice(int price) {

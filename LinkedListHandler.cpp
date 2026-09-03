@@ -3,7 +3,7 @@
 
 
 
-void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL1* current = nullptr) {
+void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL1* current) {
     //binary search to find where to put in
 
     if (current == nullptr) {
@@ -232,10 +232,9 @@ void LinkedListHandler::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
     LinkedListNodeL1* nodeL1Pointer = getNodeL1(price, root);
 
     if (nodeL1Pointer == nullptr) {
-        LinkedListNodeL1 nodeL1;
-        nodeL1.setPrice(price);
-        nodeL1Pointer = &nodeL1;
-        addNodeL1(nodeL1Pointer, nullptr);
+        nodeL1Pointer = new LinkedListNodeL1();
+        nodeL1Pointer->setPrice(price);
+        addNodeL1(nodeL1Pointer, nullptr);  
     }
 
     nodeL1Pointer->addNodeL2(NodeL2ToAdd);
@@ -244,46 +243,28 @@ void LinkedListHandler::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
 }
 
 void LinkedListHandler::removeNodeL2(int orderId) {
-    //find index of where it is in L1 using separate tracker
-    //find index of where it is in L2 using separate tracker
-    //remove it
-    LinkedListNodeL2* nodeL2ToRemove = orderTracker[orderId];
-
-    LinkedListNodeL2* previousNodeL2 = nodeL2ToRemove->getPrevNode();
-    LinkedListNodeL2* nextNodeL2 = nodeL2ToRemove->getNextNode();
-
-    if (previousNodeL2 != nullptr) {
-    previousNodeL2->setNextNode(nextNodeL2);
+    auto it = orderTracker.find(orderId);
+    if (it != orderTracker.end()) {
+        removeNodeL2(it->second);
     }
-    if (nextNodeL2 != nullptr) {
-    nextNodeL2->setPrevNode(previousNodeL2);
-    }
-
-    //delete nodeL2?
-
-
 }
 
 void LinkedListHandler::removeNodeL2(LinkedListNodeL2* nodeL2ToRemove) {
-    //find index of where it is in L1 using separate tracker
-    //find index of where it is in L2 using separate tracker
-    //remove it
+    if (nodeL2ToRemove == nullptr) return;
 
+    int price = nodeL2ToRemove->getPrice();
+    LinkedListNodeL1* priceNode = getNodeL1(price, root);
 
-    LinkedListNodeL2* previousNodeL2 = nodeL2ToRemove->getPrevNode();
+    if (priceNode != nullptr) {
+        priceNode->removeNodeL2(nodeL2ToRemove);
 
-    LinkedListNodeL2* nextNodeL2 = nodeL2ToRemove->getNextNode();
-
-
-    if (previousNodeL2 != nullptr) {
-    previousNodeL2->setNextNode(nextNodeL2);
+        if (!priceNode->hasOrders()) {
+            removeNodeL1(price, nullptr);
+        }
     }
-    if (nextNodeL2 != nullptr) {
-    nextNodeL2->setPrevNode(previousNodeL2);
-    }
-    //delete nodeL2?
 
-
+    orderTracker.erase(nodeL2ToRemove->getOrderId());
+    delete nodeL2ToRemove;
 }
 
 
@@ -400,7 +381,7 @@ void LinkedListHandler::rebalanceTree(LinkedListNodeL1* node) {
     //check balance factor by doing height left child - height right child and if the modulus is greater than 1 then need to rebalance
     int balanceFactor = getBalanceFactor(node);
 
-    if (-1 <= balanceFactor <= 1) {
+    if (balanceFactor >= -1 && balanceFactor <= 1) {
         return;
     }
 
@@ -513,11 +494,9 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
  
 void LinkedListHandler::rebalanceAtNode(LinkedListNodeL1* node) {
     while (node != nullptr) {
-        LinkedListNodeL1* parentAbove = node->getParent();
-
         rebalanceTree(node);
-
-        node = parentAbove;
+       
+        node = node->getParent();
     }
 }
 
@@ -531,6 +510,8 @@ void LinkedListHandler::addOrder(int price) {
     if (root == nullptr) {
         root = NodeL1;
     }
+
+    orderTracker[orderNodeL2->getOrderId()] = orderNodeL2;
 
     
 
@@ -579,22 +560,12 @@ LinkedListNodeL1* LinkedListHandler::getNextBuy() {
 
 
 void LinkedListHandler::buy(LinkedListNodeL2* buyOrder) {
-
-    if (buyOrder->getNextNode() == nullptr) {
-
-        
-        removeNodeL1(buyOrder->getPrice(), nullptr);
-    }
     removeNodeL2(buyOrder);
-
 }
 
 void LinkedListHandler::sell(LinkedListNodeL2* sellOrder) {
-    if (sellOrder->getNextNode() == nullptr) {
-        
-        removeNodeL1(sellOrder->getPrice(), nullptr);
-    }
     removeNodeL2(sellOrder);
 }
+
 
 
