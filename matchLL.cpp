@@ -10,15 +10,22 @@
 class MatchingEngine {
     
 
-    //LinkedListNodeL1* buys;
-    //LinkedListNodeL1* sells;
-    LinkedListHandler* buysHandler = new LinkedListHandler();
-    LinkedListHandler* sellsHandler = new LinkedListHandler();
+
+    LinkedListHandler* buysHandler;
+    LinkedListHandler* sellsHandler;
 
 
     public:
     
-    MatchingEngine()  {}
+    MatchingEngine()  {
+        buysHandler = new LinkedListHandler();
+        sellsHandler = new LinkedListHandler();
+    }
+
+    ~MatchingEngine() {
+        delete buysHandler;
+        delete sellsHandler;
+    }
 
   
 
@@ -40,10 +47,15 @@ class MatchingEngine {
 
     void matchTrades() {
         while (!buysHandler->isEmpty() && !sellsHandler->isEmpty()) {
+            LinkedListNodeL1* bestBuyNode = buysHandler->getNextBuy();
+            LinkedListNodeL1* bestSellNode = sellsHandler->getNextSell();
 
+            if (bestBuyNode == nullptr || bestSellNode == nullptr) break;
 
-            LinkedListNodeL2* buyOrder = buysHandler->getNextBuy()->getNextNodeL2();
-            LinkedListNodeL2* sellOrder = sellsHandler->getNextSell()->getNextNodeL2();
+            LinkedListNodeL2* buyOrder = bestBuyNode->getNextNodeL2();
+            LinkedListNodeL2* sellOrder = bestSellNode->getNextNodeL2();
+
+            if (buyOrder == nullptr || sellOrder == nullptr) break;
 
             int buyPrice = buyOrder->getPrice();
             int sellPrice = sellOrder->getPrice();
@@ -51,10 +63,9 @@ class MatchingEngine {
             if (buyPrice >= sellPrice) {
                 std::cout << "Selling 1 share at £" << sellPrice << ", bidding price: £" << buyPrice << ".";
                 executeTrade(buyOrder, sellOrder);
-                std:: cout << "\nSold!";
-            }
-            else {
-                std::cout << "\nNo more sales available. Highest bid: £" << buyPrice << ", lowest sell: £" << sellPrice << ".";
+                std::cout << "\nSold!\n";
+            } else {
+                std::cout << "\nNo more sales available. Highest bid: £" << buyPrice << ", lowest sell: £" << sellPrice << ".\n";
                 break;
             }
         }
@@ -67,9 +78,11 @@ class MatchingEngine {
     }
 
     void printTree() {
+        std::cout << "Buys: ";
         buysHandler->printTree();
+        std::cout << "Sells: ";
+        sellsHandler->printTree();
     }
-
 
 };
 

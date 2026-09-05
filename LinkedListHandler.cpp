@@ -1,48 +1,57 @@
 #include "LinkedListHandler.h"
 
-
+LinkedListHandler::~LinkedListHandler() {
+    
+    while (root != nullptr) {
+        removeNodeFromTree(root);
+    }
+}
 
 
 void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL1* current) {
     //binary search to find where to put in
 
-    if (current == nullptr) {
-        current = root;
+
+    if (L1NodeToAdd == nullptr) {
+        return;
     }
-    
 
     if (root == nullptr) {
-        
         root = L1NodeToAdd;
-
+        root->setParent(nullptr);
         return;
     }
     
+    if (current == nullptr) {
+        current = root;
+    }
     
     if (L1NodeToAdd->getPrice() == current->getPrice()) {
         return;
 
     }
+
     else if (L1NodeToAdd->getPrice() < current->getPrice()) {
         if (current->getLeftChildL1() != nullptr) {
-            return addNodeL1(L1NodeToAdd, current->getLeftChildL1());
+            addNodeL1(L1NodeToAdd, current->getLeftChildL1());
             
         }
         else {
             current->setLeftChildL1(L1NodeToAdd);
-            
-            return;
+            L1NodeToAdd->setParent(current);
+            rebalanceAtNode(current);
 
         }
     }
     else if (L1NodeToAdd->getPrice() > current->getPrice()) {
         if (current->getRightChildL1() != nullptr) {
-            return addNodeL1(L1NodeToAdd, current->getRightChildL1());
+            addNodeL1(L1NodeToAdd, current->getRightChildL1());
             
         }
         else {
             current->setRightChildL1(L1NodeToAdd);
-            
+            L1NodeToAdd->setParent(current);
+            rebalanceAtNode(current);
             return;
 
         }
@@ -51,9 +60,14 @@ void LinkedListHandler::addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL
     
 }
 void LinkedListHandler::removeNodeL1(int price, LinkedListNodeL1* current) {
+
+    if (root == nullptr) {
+        return;
+    }
+
     if (current == nullptr) {
         current = root;
-        if (current == nullptr) return;
+        
     }
 
     if (price == current->getPrice()) {
@@ -95,20 +109,20 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
 
     //Single child (Left child only)
     if (nodeL1ToRemove->getLeftChildL1() != nullptr && nodeL1ToRemove->getRightChildL1() == nullptr) {
-        LinkedListNodeL1* grandChild = nodeL1ToRemove->getLeftChildL1();
-        grandChild->setParent(parent);
+        LinkedListNodeL1* child = nodeL1ToRemove->getLeftChildL1();
+        child->setParent(parent);
 
         if (parent != nullptr) {
             bool left = parent->removeChild(nodeL1ToRemove);
             if (left) {
-                parent->setLeftChildL1(grandChild);
+                parent->setLeftChildL1(child);
             } else {
-                parent->setRightChildL1(grandChild);
+                parent->setRightChildL1(child);
             }
             rebalanceNode = parent;
         } else {
-            this->root = grandChild;
-            rebalanceNode = grandChild;
+            this->root = child;
+            rebalanceNode = child;
         }
 
         delete nodeL1ToRemove;
@@ -117,20 +131,20 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
 
     //Single child (Right child only)
     if (nodeL1ToRemove->getLeftChildL1() == nullptr && nodeL1ToRemove->getRightChildL1() != nullptr) {
-        LinkedListNodeL1* grandChild = nodeL1ToRemove->getRightChildL1();
-        grandChild->setParent(parent);
+        LinkedListNodeL1* child = nodeL1ToRemove->getRightChildL1();
+        child->setParent(parent);
 
         if (parent != nullptr) {
             bool left = parent->removeChild(nodeL1ToRemove);
             if (left) {
-                parent->setLeftChildL1(grandChild);
+                parent->setLeftChildL1(child);
             } else {
-                parent->setRightChildL1(grandChild);
+                parent->setRightChildL1(child);
             }
             rebalanceNode = parent;
         } else {
-            this->root = grandChild;
-            rebalanceNode = grandChild;
+            this->root = child;
+            rebalanceNode = child;
         }
 
         delete nodeL1ToRemove;
@@ -185,6 +199,10 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
 LinkedListNodeL1* LinkedListHandler::getNodeL1(int price, LinkedListNodeL1* current) {
                 //binary search to find where to put in
 
+    if (root == nullptr) {
+        return nullptr;
+    }
+
     if (current == nullptr) {
         current = root;
     }
@@ -195,13 +213,13 @@ LinkedListNodeL1* LinkedListHandler::getNodeL1(int price, LinkedListNodeL1* curr
     
     if (price == current->getPrice()) {
         return current;
-
     }
     else if (price < current->getPrice()) {
         if (current->getLeftChildL1() != nullptr) {
             return getNodeL1(price, current->getLeftChildL1());
             
         }
+        
         else {
             //doesnt exist
             return nullptr;
@@ -214,7 +232,7 @@ LinkedListNodeL1* LinkedListHandler::getNodeL1(int price, LinkedListNodeL1* curr
             
         }
         else {
-            //diesbnt exist
+            //doesnt exist
             return nullptr;
 
         }
@@ -226,20 +244,13 @@ LinkedListNodeL1* LinkedListHandler::getNodeL1(int price, LinkedListNodeL1* curr
     
 }
 void LinkedListHandler::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
-    //get the price somehow and then insert at the back of the queue?
+    if (NodeL2ToAdd == nullptr) {
+        return;
+    }
     int price = NodeL2ToAdd->getPrice();
 
-    LinkedListNodeL1* nodeL1Pointer = getNodeL1(price, root);
-
-    if (nodeL1Pointer == nullptr) {
-        nodeL1Pointer = new LinkedListNodeL1();
-        nodeL1Pointer->setPrice(price);
-        addNodeL1(nodeL1Pointer, nullptr);  
-    }
-
+    LinkedListNodeL1* nodeL1Pointer = getOrCreateNodeL1(price, root);
     nodeL1Pointer->addNodeL2(NodeL2ToAdd);
-
-
 }
 
 void LinkedListHandler::removeNodeL2(int orderId) {
@@ -253,6 +264,7 @@ void LinkedListHandler::removeNodeL2(LinkedListNodeL2* nodeL2ToRemove) {
     if (nodeL2ToRemove == nullptr) return;
 
     int price = nodeL2ToRemove->getPrice();
+    int orderId = nodeL2ToRemove -> getOrderId();
     LinkedListNodeL1* priceNode = getNodeL1(price, root);
 
     if (priceNode != nullptr) {
@@ -263,7 +275,7 @@ void LinkedListHandler::removeNodeL2(LinkedListNodeL2* nodeL2ToRemove) {
         }
     }
 
-    orderTracker.erase(nodeL2ToRemove->getOrderId());
+    orderTracker.erase(orderId);
     delete nodeL2ToRemove;
 }
 
@@ -283,6 +295,8 @@ LinkedListNodeL2* LinkedListHandler::getNextOrder(int price) {
 }
 
 int LinkedListHandler::getBalanceFactor(LinkedListNodeL1* nodeL1) {
+
+    if (nodeL1 == nullptr) return 0;
     int heightLeftChild;
     int heightRightChild;
 
@@ -316,11 +330,11 @@ void LinkedListHandler::rotateLeft(LinkedListNodeL1* rootToStartFrom) {
 
     LinkedListNodeL1* orphanSubtree = newRoot->getLeftChildL1();
 
-    newRoot->setLeftChildL1(oldRoot);
-    oldRoot->setRightChildL1(orphanSubtree);
-
     LinkedListNodeL1* oldRootParent = oldRoot->getParent();
 
+    newRoot->setLeftChildL1(oldRoot);
+    oldRoot->setRightChildL1(orphanSubtree);
+    
     oldRoot->setParent(newRoot);
     newRoot->setParent(oldRootParent);
 
@@ -334,7 +348,7 @@ void LinkedListHandler::rotateLeft(LinkedListNodeL1* rootToStartFrom) {
     else if (oldRootParent->getRightChildL1() == oldRoot) {
         oldRootParent->setRightChildL1(newRoot);
     }
-    else {
+    else if (oldRootParent-> getLeftChildL1() == oldRoot) {
         oldRootParent->setLeftChildL1(newRoot);
     }
 }
@@ -351,10 +365,12 @@ void LinkedListHandler::rotateRight(LinkedListNodeL1* rootToStartFrom) {
 
     LinkedListNodeL1* orphanSubtree = newRoot->getRightChildL1();
 
+    LinkedListNodeL1* oldRootParent = oldRoot->getParent();
+
     newRoot->setRightChildL1(oldRoot);
     oldRoot->setLeftChildL1(orphanSubtree);
 
-    LinkedListNodeL1* oldRootParent = oldRoot->getParent();
+    
 
     oldRoot->setParent(newRoot);
     newRoot->setParent(oldRootParent);
@@ -369,7 +385,7 @@ void LinkedListHandler::rotateRight(LinkedListNodeL1* rootToStartFrom) {
     else if (oldRootParent->getLeftChildL1() == oldRoot) {
         oldRootParent->setLeftChildL1(newRoot);
     }
-    else {
+    else if (oldRootParent->getRightChildL1() == oldRoot) {
         oldRootParent->setRightChildL1(newRoot);
     }
 
@@ -377,6 +393,10 @@ void LinkedListHandler::rotateRight(LinkedListNodeL1* rootToStartFrom) {
 
 void LinkedListHandler::rebalanceTree(LinkedListNodeL1* node) {
     //rebalance to keep the search O(log N)
+
+    if (node == nullptr) {
+        return;
+    }
 
     //check balance factor by doing height left child - height right child and if the modulus is greater than 1 then need to rebalance
     int balanceFactor = getBalanceFactor(node);
@@ -397,22 +417,18 @@ void LinkedListHandler::rebalanceTree(LinkedListNodeL1* node) {
     }
 
     if (balanceFactor > 1 && balanceFactorLeft >= 0) {
-        //root.rightRotate()
+        
         rotateRight(node);
     }
     else if (balanceFactor < -1 && balanceFactorRight <= 0) {
-        //root.leftRotate()
+        
         rotateLeft(node);
     }
     else if (balanceFactor > 1 && balanceFactorLeft < 0) {
-        //root.leftChild.leftRotate()
-        //root.rightRotate()
         rotateLeft(node->getLeftChildL1());
         rotateRight(node);
     }
     else if (balanceFactor < -1 && balanceFactorRight > 0) {
-        //root.rightChild.rightRotate()
-        //root.leftRotate()
         rotateRight(node->getRightChildL1());
         rotateLeft(node);
     }
@@ -424,24 +440,28 @@ void LinkedListHandler::rebalanceTree(LinkedListNodeL1* node) {
 
 
 void LinkedListHandler::printTree() {
-
+    if (root != nullptr) {
     root->printTree(); 
+    std::cout << "\n";
+    }
 }
 
 LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNodeL1* current) {
                 //binary search to find where to put in
 
-    if (current == nullptr) {
-        current = root;
-    }
     
 
     if (root == nullptr) {
         LinkedListNodeL1* nodeL1 = new LinkedListNodeL1();
         nodeL1->setPrice(price);
+        nodeL1->setParent(nullptr);
         root = nodeL1;
         return nodeL1;
 
+    }
+
+    if (current == nullptr) {
+        current = root;
     }
     
     
@@ -480,7 +500,7 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
 
             current->setRightChildL1(nodeL1);
             nodeL1->setParent(current);
-            std::cout << price;
+        
 
             rebalanceAtNode(current);
             return nodeL1;
@@ -495,21 +515,18 @@ LinkedListNodeL1* LinkedListHandler::getOrCreateNodeL1(int price, LinkedListNode
 void LinkedListHandler::rebalanceAtNode(LinkedListNodeL1* node) {
     while (node != nullptr) {
         rebalanceTree(node);
-       
         node = node->getParent();
     }
 }
 
 void LinkedListHandler::addOrder(int price) {
-    LinkedListNodeL1* NodeL1 = getOrCreateNodeL1(price, nullptr);
+    LinkedListNodeL1* nodeL1 = getOrCreateNodeL1(price, nullptr);
     LinkedListNodeL2* orderNodeL2 = (new LinkedListNodeL2());
     orderNodeL2->setPrice(price);
     orderNodeL2->setOrderId(orderId++);
 
-    NodeL1->addNodeL2(orderNodeL2);
-    if (root == nullptr) {
-        root = NodeL1;
-    }
+    nodeL1->addNodeL2(orderNodeL2);
+
 
     orderTracker[orderNodeL2->getOrderId()] = orderNodeL2;
 
@@ -520,7 +537,7 @@ void LinkedListHandler::addOrder(int price) {
 
 bool LinkedListHandler::isEmpty() {
     if (root == nullptr) {
-        std::cout << "HI";
+      
         return true;
     }
     else {
@@ -531,6 +548,9 @@ bool LinkedListHandler::isEmpty() {
 
 LinkedListNodeL1* LinkedListHandler::getMinNode(LinkedListNodeL1* current) {
 
+    if (current == nullptr) {
+        return nullptr;
+    }
 
     if (current->getLeftChildL1() == nullptr) {
         return current;
@@ -545,13 +565,19 @@ LinkedListNodeL1* LinkedListHandler::getNextSell() {
 }
 
 LinkedListNodeL1* LinkedListHandler::getMaxNode(LinkedListNodeL1* current) {
+
+    if (current == nullptr) {
+        return nullptr;
+
+    }
+
     if (current->getRightChildL1() == nullptr) {
         return current;
     }
     else {
         return getMaxNode(current->getRightChildL1());
     }
-    return nullptr;
+    
 }
 
 LinkedListNodeL1* LinkedListHandler::getNextBuy() {

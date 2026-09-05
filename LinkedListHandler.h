@@ -17,6 +17,7 @@ class LinkedListHandler {
         int orderId = 0;
 
     public:
+        ~LinkedListHandler();    
 
         void addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL1* current);
 
