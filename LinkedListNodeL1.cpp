@@ -20,6 +20,10 @@ LinkedListNodeL1* LinkedListNodeL1::getRightChildL1() {
 }
 
 void LinkedListNodeL1::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
+
+    if (NodeL2ToAdd == nullptr) {
+        return;
+    }
     
     if (headL2 == nullptr) {
         this->headL2 = NodeL2ToAdd;
@@ -38,7 +42,9 @@ void LinkedListNodeL1::addNodeL2(LinkedListNodeL2* NodeL2ToAdd) {
 }
 
 void LinkedListNodeL1::removeNodeL2(LinkedListNodeL2* node) {
-    if (node == nullptr) return;
+    if (node == nullptr) {
+        return;
+    }
 
     LinkedListNodeL2* prev = node->getPrevNode();
     LinkedListNodeL2* next = node->getNextNode();
@@ -110,6 +116,12 @@ bool LinkedListNodeL1::removeChild(LinkedListNodeL1* child) {
 
 LinkedListNodeL1* LinkedListNodeL1::getInOrderSuccessor() {
     LinkedListNodeL1* rightChild = getRightChildL1();
+    
+    if (rightChildL1 == nullptr) {
+        return nullptr;
+    }
+
+    
 
     return rightChild->getMinimum();
 }
