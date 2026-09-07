@@ -19,7 +19,7 @@ public:
 
     void addNodeL2(LinkedListNodeL2* NodeL2);
     void removeNodeL2(LinkedListNodeL2* node);
-    bool hasOrders() const;
+    bool hasOrders();
 
     void setPrice(int price);
     void setLeftChildL1(LinkedListNodeL1* leftChildL1);

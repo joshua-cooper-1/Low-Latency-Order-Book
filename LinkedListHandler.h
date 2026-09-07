@@ -19,6 +19,8 @@ class LinkedListHandler {
     public:
         ~LinkedListHandler();    
 
+        void clearTree(LinkedListNodeL1* node);
+
         void addNodeL1(LinkedListNodeL1* L1NodeToAdd, LinkedListNodeL1* current);
 
         void removeNodeL1(int price, LinkedListNodeL1* current);
@@ -41,7 +43,7 @@ class LinkedListHandler {
 
         void rotateLeft(LinkedListNodeL1* rootToStartFrom);
 
-        void rotateRight(LinkedListNodeL1* rootToStartFrom) {}
+        void rotateRight(LinkedListNodeL1* rootToStartFrom);
 
         void rebalanceTree(LinkedListNodeL1* node);
 

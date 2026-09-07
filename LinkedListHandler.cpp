@@ -1,10 +1,16 @@
 #include "LinkedListHandler.h"
 
 LinkedListHandler::~LinkedListHandler() {
-    
-    while (root != nullptr) {
-        removeNodeFromTree(root);
-    }
+    clearTree(root);
+    root = nullptr;
+    orderTracker.clear();
+}
+
+void LinkedListHandler::clearTree(LinkedListNodeL1* node) {
+    if (node == nullptr) return;
+    clearTree(node->getLeftChildL1());
+    clearTree(node->getRightChildL1());
+    delete node;
 }
 
 
@@ -113,7 +119,8 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
         child->setParent(parent);
 
         if (parent != nullptr) {
-            bool left = parent->removeChild(nodeL1ToRemove);
+            parent->removeChild(nodeL1ToRemove);
+            bool left = (parent->getLeftChildL1() == nodeL1ToRemove);
             if (left) {
                 parent->setLeftChildL1(child);
             } else {
@@ -135,7 +142,8 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
         child->setParent(parent);
 
         if (parent != nullptr) {
-            bool left = parent->removeChild(nodeL1ToRemove);
+            parent->removeChild(nodeL1ToRemove);
+            bool left = (parent->getLeftChildL1() == nodeL1ToRemove);
             if (left) {
                 parent->setLeftChildL1(child);
             } else {
@@ -191,6 +199,7 @@ LinkedListNodeL1* LinkedListHandler::removeNodeFromTree(LinkedListNodeL1* nodeL1
             parent->setRightChildL1(successor);
         }
     }
+
 
     delete nodeL1ToRemove;
     return rebalanceNode;
