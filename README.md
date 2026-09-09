@@ -1,8 +1,6 @@
 # Low-Latency Limit Order Book & Matching Engine (C++)
 
 [![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue.svg)](https://en.cppreference.com/w/cpp/17)
-[![Platform](https://img.shields.io/badge/Platform-macOS%20%7C%20Linux-lightgrey.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 An in-memory **Limit Order Book (LOB)** and deterministic trade execution engine implemented in modern C++. 
 
@@ -83,17 +81,6 @@ High-frequency and low-latency exchange order books require sub-microsecond boun
 * CMake 3.16+
 * C++17 Standard Library support
 
-### Build with CMake (Recommended)
-```bash
-# Generate build files
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-
-# Compile
-cmake --build build
-
-# Execute matching engine
-./build/matching_engine
-```
 
 ### Direct Compilation
 ```bash
@@ -109,9 +96,14 @@ clang++ -std=c++17 -O3 -Wall -Wextra \
 
 ### Execution Output
 ```text
-Buys: 4 5 6 12
-Sells: 11 13
-
+Buys:
+4
+5
+6
+12
+Sells:
+11
+13
 Selling 1 share at £11, bidding price: £12.
 Sold!
 
@@ -149,9 +141,6 @@ This project represents an active implementation of a low-latency matching engin
 - [ ] Cached node heights for true O(log P) self-balancing rotations
 - [ ] Order quantity, volume tracking, and multi-tier partial fill matching
 - [ ] Automated unit test suite (GoogleTest / Catch2) for concurrent edge cases
-- [ ] Lock-free Single-Producer Single-Consumer (SPSC) queue ingestion interface
 
 ---
 
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
