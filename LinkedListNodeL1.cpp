@@ -2,6 +2,17 @@
 #include <iostream>
 #include <algorithm>
 
+LinkedListNodeL1::~LinkedListNodeL1() {
+    LinkedListNodeL2* current = headL2;
+    while (current != nullptr) {
+        LinkedListNodeL2* nextNode = current->getNextNode();
+        delete current;
+        current = nextNode;
+    }
+    headL2 = nullptr;
+    tailL2 = nullptr;
+}
+
 
 LinkedListNodeL2* LinkedListNodeL1::getNextNodeL2() {
     return headL2;

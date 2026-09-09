@@ -12,6 +12,7 @@ private:
     LinkedListNodeL1* parent = nullptr;
 
 public:
+    ~LinkedListNodeL1();
     LinkedListNodeL2* getNextNodeL2();
     int getPrice();
     LinkedListNodeL1* getLeftChildL1();
