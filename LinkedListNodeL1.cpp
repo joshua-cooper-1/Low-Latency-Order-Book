@@ -98,7 +98,7 @@ void LinkedListNodeL1::printTree() {
         getLeftChildL1()->printTree();
     }
 
-    std::cout << this->price;
+    std::cout << "\n" << this->price;
     if (getRightChildL1() != nullptr) {
         getRightChildL1()->printTree();
     }
