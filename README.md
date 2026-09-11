@@ -50,7 +50,7 @@ High-frequency and low-latency exchange order books require sub-microsecond boun
 | :--- | :---: | :---: | :---: | :--- |
 | **Lookup Best Bid / Ask** | O(N) | **O(log P)** | O(1) | Traverses tree extremities; can be cached to O(1) |
 | **Insert Limit Order** | O(N) | **O(log P)** | O(log P) | Binary search insertion + tail pointer append |
-| **Cancel Order by ID** | O(N) | **O(1) amortized** | O(1) | Direct pointer lookup via hash map + O(1) DLL splice |
+| **Cancel Order by ID** | O(N) | **O(1) amortised** | O(1) | Direct pointer lookup via hash map + O(1) DLL splice |
 | **Top-of-Book Trade Match** | O(N) | **O(1)** | O(1) | Pops head of doubly-linked list at optimal price node |
 
 *Legend: N = total resting orders across the entire book, P = total distinct active price levels.*
@@ -114,7 +114,7 @@ No more sales available. Highest bid: £6, lowest sell: £13.
 
 ## ⚠️ Current Issues & Technical Debt
 
-This project represents an active implementation of a low-latency matching engine. Key areas of ongoing optimization and architectural improvements include:
+This project represents an active implementation of a low-latency matching engine. Key areas of ongoing optimisation and architectural improvements include:
 
 ### 1. Dynamic O(N) Height Calculation During Rebalancing
 * **Current State:** `LinkedListNodeL1::getHeight()` recursively traverses left and right subtrees to compute node height on every query.
