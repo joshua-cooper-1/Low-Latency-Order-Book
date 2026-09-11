@@ -78,7 +78,6 @@ High-frequency and low-latency exchange order books require sub-microsecond boun
 
 ### Prerequisites
 * Clang++ (Apple Clang 12+) or GCC (g++ 9+)
-* CMake 3.16+
 * C++17 Standard Library support
 
 
